@@ -1,140 +1,102 @@
-# AguaYa — Guía de instalación con MySQL
+# 💧 AguaYa (EcoSantaMarta) — Plataforma de Reporte y Monitoreo Hídrico
 
-## Estructura del proyecto
-
-```
-aguaya/
-├── aguaya-backend/      ← Node.js + Express (este paquete)
-│   ├── server.js
-│   ├── schema.sql
-│   ├── .env.example
-│   └── package.json
-└── aguaya-frontend/     ← Tu proyecto Vue existente
-    └── src/
-        ├── stores/waterReports.js   ← Reemplazar
-        └── views/
-            ├── MapaView.vue         ← Reemplazar
-            └── EstadisticasView.vue ← Reemplazar
-```
+Aplicación web **Full-Stack** diseñada para el reporte ciudadano, geolocalización y análisis estadístico de problemáticas en el suministro de agua en Santa Marta, Colombia.
 
 ---
 
-## Paso 1 — Base de datos MySQL
-
-Abre MySQL Workbench o tu terminal y ejecuta:
-
-```bash
-mysql -u root -p < schema.sql
-```
-
-O copia y pega el contenido de `schema.sql` directamente en MySQL Workbench.
+## 🚀 Características principales
+- **Mapa interactivo y geocodificación:** Registro y visualización geográfica de reportes mediante integración con Nominatim (OpenStreetMap).
+- **Gestión de incidencias (CRUD):** Creación, filtrado por categoría (ej. *Sin agua*, fugas, baja presión), actualización de estado y eliminación de reportes.
+- **Panel de estadísticas:** Visualización de métricas agregadas y gráficas en tiempo real sobre las zonas y tipos de fallas más frecuentes.
+- **Arquitectura Full-Stack:** Frontend reactivo en Vue.js conectado a una API REST propia en Node.js/Express con persistencia en MySQL.
 
 ---
 
-## Paso 2 — Configurar el backend
-
-```bash
-# Entra a la carpeta del backend
-cd aguaya-backend
-
-# Instala dependencias
-npm install
-
-# Crea tu archivo .env con tus datos reales
-cp .env.example .env
-```
-
-Edita `.env` y pon tu contraseña de MySQL:
-
-```
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=tu_password_aqui
-DB_NAME=aguaya
-PORT=3001
-```
+## 🛠️ Stack Tecnológico
+- **Frontend:** Vue 3, Vite, Pinia (`stores`), JavaScript (ES6+), HTML5, CSS3.
+- **Backend:** Node.js, Express, CORS, Dotenv.
+- **Base de datos:** MySQL.
+- **Servicios externos:** Nominatim API (Geocodificación).
 
 ---
 
-## Paso 3 — Arrancar el backend
+## 📂 Estructura del proyecto
 
-```bash
-# Modo normal
-node server.js
-
-# Modo desarrollo (se reinicia automáticamente al guardar)
-npx nodemon server.js
-```
-
-Deberías ver:
-```
-✅ Conectado a MySQL
-🚀 AguaYa API corriendo en http://localhost:3001
-```
-
-Verifica que funciona abriendo: http://localhost:3001/api/reportes
+    aguaya/
+    ├── aguaya-backend/          # API REST (Node.js + Express + MySQL)
+    │   ├── server.js
+    │   ├── schema.sql
+    │   ├── .env.example
+    │   └── package.json
+    └── aguaya-frontend/         # Aplicación cliente (Vue 3 + Vite + Pinia)
+        └── src/
+            ├── stores/
+            │   └── waterReports.js
+            └── views/
+                ├── MapaView.vue
+                └── EstadisticasView.vue
 
 ---
 
-## Paso 4 — Actualizar el frontend Vue
+## ⚙️ Instalación y ejecución en local
 
-Copia los archivos al proyecto Vue:
+### 1. Clonar el repositorio
 
-```bash
-# Store (reemplaza el existente)
-cp waterReports.js  ../aguaya-frontend/src/stores/waterReports.js
+    git clone [https://github.com/Frixmas-dot/EcoSantaMarta_v2.git](https://github.com/Frixmas-dot/EcoSantaMarta_v2.git)
+    cd EcoSantaMarta_v2
 
-# Vistas (reemplaza las existentes)
-cp MapaView.vue         ../aguaya-frontend/src/views/MapaView.vue
-cp EstadisticasView.vue ../aguaya-frontend/src/views/EstadisticasView.vue
-```
+### 2. Configurar la base de datos (MySQL)
+Importa el esquema inicial desde la terminal o ejecuta el contenido de `schema.sql` en MySQL Workbench:
 
----
+    mysql -u root -p < aguaya-backend/schema.sql
 
-## Paso 5 — Arrancar todo
+### 3. Configurar y arrancar el Backend
 
-**Terminal 1 — Backend:**
-```bash
-cd aguaya-backend
-node server.js
-```
+    cd aguaya-backend
+    npm install
+    cp .env.example .env
 
-**Terminal 2 — Frontend Vue:**
-```bash
-cd aguaya-frontend
-npm run dev
-```
+Edita el archivo `.env` con tus credenciales locales de MySQL:
 
-Abre http://localhost:5173 — los reportes ahora vienen de MySQL.
+    DB_HOST=localhost
+    DB_PORT=3306
+    DB_USER=root
+    DB_PASSWORD=tu_password_aqui
+    DB_NAME=aguaya
+    PORT=3001
 
----
+Inicia el servidor:
 
-## Endpoints de la API
+    node server.js
 
-| Método | Ruta                          | Descripción                    |
-|--------|-------------------------------|--------------------------------|
-| GET    | /api/reportes                 | Todos los reportes             |
-| GET    | /api/reportes?tipo=Sin agua   | Filtrar por tipo               |
-| GET    | /api/reportes/:id             | Un reporte específico          |
-| POST   | /api/reportes                 | Crear reporte nuevo            |
-| PATCH  | /api/reportes/:id/estado      | Cambiar estado del reporte     |
-| DELETE | /api/reportes/:id             | Eliminar reporte               |
-| GET    | /api/estadisticas             | Datos agregados para gráficas  |
-| GET    | /api/health                   | Verificar que la API funciona  |
+La API quedará disponible en `http://localhost:3001`.
+
+### 4. Configurar y arrancar el Frontend
+En una nueva terminal:
+
+    cd aguaya-frontend
+    npm install
+    npm run dev
+
+Abre `http://localhost:5173` en tu navegador.
 
 ---
 
-## Solución de problemas
+## 🔌 Endpoints de la API
 
-**Error: ECONNREFUSED al conectar a MySQL**
-- Verifica que MySQL está corriendo
-- Revisa usuario y contraseña en `.env`
+| Método | Ruta | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/reportes` | Obtener todos los reportes (admite filtro `?tipo=Sin agua`) |
+| `GET` | `/api/reportes/:id` | Consultar un reporte específico |
+| `POST` | `/api/reportes` | Crear un nuevo reporte con geocodificación |
+| `PATCH` | `/api/reportes/:id/estado` | Actualizar el estado de un reporte |
+| `DELETE` | `/api/reportes/:id` | Eliminar un reporte |
+| `GET` | `/api/estadisticas` | Obtener datos agregados para gráficas |
+| `GET` | `/api/health` | Verificar el estado de la API |
 
-**Error: CORS**
-- El backend permite solo `http://localhost:5173` (Vite)
-- Si usas otro puerto, edita la línea `cors({ origin: '...' })` en `server.js`
+---
 
-**Nominatim no geocodifica**
-- Si no hay internet, se usan coordenadas aleatorias cerca de Santa Marta
-- El reporte igual se guarda correctamente
+## 👨‍💻 Autor
+**Friedrick Riojas Gutiérrez**
+- GitHub: [@Frixmas-dot](https://github.com/Frixmas-dot)
+- Correo: riojas0804@gmail.com
